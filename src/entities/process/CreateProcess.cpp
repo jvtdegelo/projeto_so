@@ -17,7 +17,7 @@ public:
   vector< pair< string, string> > getTCB() override {
     vector< pair < string, string> > tcb;
     tcb.push_back(make_pair("PID", to_string(pid)));
-    tcb.push_back(make_pair("Priority", to_string(pid))); 
+    tcb.push_back(make_pair("Priority", to_string(priority))); 
 
     return tcb;
   }
