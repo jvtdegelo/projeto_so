@@ -6,12 +6,12 @@
 #include <string>
 #include <utility>
 
-#include "../../memory/MemoryHandler.h"
+#include "../memory/MemoryHandler.h"
 #include "AbstractProcess.h"
 
 class InstructionProcess: public AbstractProcess{
 public:
-  InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler& memoryHandler);
+  InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler* memoryHandler);
   int getPriority() override;
   int getPID() override;
   std::vector< std::pair< std::string, std::string> > getTCB() override;
@@ -24,9 +24,9 @@ private:
   int memorySize;
   int memoryPosition;
   int programCounter=0;
-  MemoryHandler memoryHandler; 
+  MemoryHandler* memoryHandler; 
   std::vector< std::string > code;
   bool checkPastCodeContains(std::string str);
-}
+};
 
 #endif

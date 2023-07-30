@@ -1,6 +1,8 @@
 #ifndef ABSTRACTQUEUE_H
 #define ABSTRACTQUEUE_H
 
+#include "../process/AbstractProcess.h"
+
 class AbstractQueue{
 public:
   virtual AbstractProcess* next()=0;

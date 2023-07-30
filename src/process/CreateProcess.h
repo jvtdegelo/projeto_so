@@ -1,13 +1,13 @@
 #ifndef CREATEPROCESS_H
 #define CREATEPROCESS_H
 
-#include "../../memory/MemoryHandler.h"
-#include "../queue/AbstractQueue.h"
-#include "AbstractProcess.h"
-
 #include <vector>
 #include <string>
 #include <utility>
+
+#include "../memory/MemoryHandler.h"
+#include "../queue/AbstractQueue.h"
+#include "AbstractProcess.h"
 
 class CreateProcess: public AbstractProcess{
 public:

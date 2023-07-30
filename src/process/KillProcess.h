@@ -4,15 +4,15 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
-#include<utility>
+#include <utility>
 
-#include "../../memory/MemoryHandler.h"
+#include "../memory/MemoryHandler.h"
 #include "../queue/AbstractQueue.h"
 #include "AbstractProcess.h"
 
-class killProcess: public AbstractProcess{
+class KillProcess: public AbstractProcess{
 public:
-  KillProcess(int pid, int pidToKill, MemoryHandler& memoryHandler, AbstractQueue& processQueue);
+  KillProcess(int pid, int pidToKill, MemoryHandler* memoryHandler, AbstractQueue* processQueue);
   int getPriority() override;
   int getPID() override;
   std::vector< std::pair< std::string, std::string> > getTCB() override;
@@ -23,6 +23,8 @@ private:
   int priority;
   int pid;
   int pidToKill;
-  MemoryHandler memoryHandler;
-  AbstractQueue processQueue;
-}
+  MemoryHandler* memoryHandler;
+  AbstractQueue* processQueue;
+};
+
+#endif
