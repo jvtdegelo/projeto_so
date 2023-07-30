@@ -4,21 +4,18 @@
 #include <string>
 #include <map>
 #include<utility>
-using namespace std;
-
-int MEMORY_SIZE = 20;
 
 class MemoryHandler {
     private:
         bool bitmap[MEMORY_SIZE];
-        map< int, pair < int, int > > pidmap; 
+        std::map< int, std::pair < int, int > > pidmap; 
 
     public:
         MemoryHandler(){
-            ifstream inputFile("memory_map.txt"); 
+            std::ifstream inputFile("memory_map.txt"); 
             if (inputFile.is_open()) {
-                string line;
-                getline(inputFile, line);
+                std::string line;
+                std::getline(inputFile, line);
                 int memoryIndex = 0;
                 for (int i=0; i<line.length; i++){
                     if(line[i] != "1" && line[i] != "0")
@@ -31,7 +28,7 @@ class MemoryHandler {
 
                 inputFile.close();
             } else {
-                cout << "Unable to open the file." << endl;
+                std::cout << "Unable to open the file." << std::endl;
             }
         }
 
@@ -48,7 +45,7 @@ class MemoryHandler {
                     for (int j=i; j<i+size; j++){
                         bitmap[j] = true;
                     }
-                    pidmap[pid] = make_pair(i, size);
+                    pidmap[pid] = std::make_pair(i, size);
                     return i;
                 }
             }

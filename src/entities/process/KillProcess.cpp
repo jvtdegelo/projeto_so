@@ -2,7 +2,6 @@
 #include <vector>
 #include <string>
 #include<utility>
-using namespace std;
 
 class killProcess: public AbstractProcess{
 public:
@@ -13,10 +12,14 @@ public:
     return priority;
   }
 
-  vector< pair< string, string> > getTCB() override {
-    vector< pair < string, string> > tcb;
-    tcb.push_back(make_pair("PID", to_string(pid)));
-    tcb.push_back(make_pair("Priority", to_string(priority))); 
+  int getPID() override {
+    return pid;
+  }
+
+  std::vector< std::pair< std::string, std::string> > getTCB() override {
+    std::vector< std::pair < std::string, std::string> > tcb;
+    tcb.push_back(std::make_pair("PID", to_string(pid)));
+    tcb.push_back(std::make_pair("Priority", to_string(priority))); 
 
     return tcb;
   }

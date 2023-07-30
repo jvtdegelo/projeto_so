@@ -2,7 +2,6 @@
 #include <vector>
 #include <string>
 #include<utility>
-using namespace std;
 
 class InstructionProcess: public AbstractProcess{
 public:
@@ -18,15 +17,19 @@ public:
     return priority;
   }
 
-  vector< pair< string, string> > getTCB() override {
-    vector< pair < string, string> > tcb;
-    tcb.push_back(make_pair("PID", to_string(pid)));
-    tcb.push_back(make_pair("Priority", to_string(priority))); 
-    tcb.push_back(make_pair("Program Counter", to_string(programCounter)));
+  int getPID() override {
+    return pid;
+  }
+
+  std::vector< std::pair< std::string, std::string> > getTCB() override {
+    std::vector< std::pair < std::string, std::string> > tcb;
+    tcb.push_back(std::make_pair("PID", to_string(pid)));
+    tcb.push_back(std::make_pair("Priority", to_string(priority))); 
+    tcb.push_back(std::make_pair("Program Counter", to_string(programCounter)));
     if(checkPastCodeContains("AX"));
-      tcb.push_back(make_pair("AX", "#VALOR"));
+      tcb.push_back(std::make_pair("AX", "#VALOR"));
     if(checkPastCodeContains("BX"));
-      tcb.push_back(make_pair("BX", "#VALOR"));
+      tcb.push_back(std::make_pair("BX", "#VALOR"));
     return tcb;
   };
 
@@ -50,11 +53,11 @@ private:
   int memoryPosition;
   int programCounter=0;
   MemoryHandler memoryHandler; 
-  vector< string > code;
-  bool checkPastCodeContains(string str){
+  std::vector< std::string > code;
+  bool checkPastCodeContains(std::string str){
     for(int i=0; i<programCounter; i++){
-      string line = code[i];
-      if(line.find(str) != string::npos){
+      std::string line = code[i];
+      if(line.find(str) != std::string::npos){
         return true;
       }
     }
