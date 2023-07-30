@@ -1,0 +1,6 @@
+- Adicionar classe responsavel por gerar valores de PID
+- Adicionar primeira versao layout
+- Adicionar segundo programa adicionando novos processos na fila
+- Adicionar implementacao Round-Robin
+- Adicionar geracao aleatoria de codigos para InstructionProcess
+- Criar processo para compactacao da memoria e determinar quando ele deve ocorrer
