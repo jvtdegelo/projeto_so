@@ -24,21 +24,24 @@ int lastCounter = 0;
 
 void* listener(void* arg) {
   while (true) {
-    std::ifstream inputFile("./memory_map.txt"); 
+    std::ifstream inputFile("./communication.txt"); 
     if (inputFile.is_open()) {
       std::string line;
       std::getline(inputFile, line);
       int newCounter = std::stoi(line);
       if (newCounter!=lastCounter){
+        lastCounter=newCounter;
         std::getline(inputFile, line);
         char operation = line[0];
         int parameter = std::stoi(line.substr(2, line.size()-1));
         AbstractProcess* newProcess;
-        if (operation == 'C')
-          newProcess = new CreateProcess(getterPID->get(), parameter, memoryHandler, queue);
-        else if (operation == 'K')
-          newProcess = new KillProcess(getterPID->get(), parameter, memoryHandler, queue);
         pthread_mutex_lock(&mutex);
+        if (operation == 'c'){
+          newProcess = new CreateProcess(getterPID->get(), parameter, memoryHandler, queue);
+        }
+        else if (operation == 'k'){
+          newProcess = new KillProcess(getterPID->get(), parameter, memoryHandler, queue);
+        }
         queue->add(newProcess);
         pthread_mutex_unlock(&mutex);    
       }
@@ -47,7 +50,7 @@ void* listener(void* arg) {
       std::cout << "Unable to open the communication file" << std::endl;
     }
         
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
 
   return nullptr;
@@ -67,7 +70,6 @@ void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandle
   pthread_mutex_lock(&mutex);
   std::vector<std::string> showQueue = queue->show();
   pthread_mutex_unlock(&mutex);    
-  
   std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
   std::cout<<"|         Status        ||      TCB      || Mapa de bits ||   Fila de Prontos   |"<<std::endl;
   std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
@@ -97,17 +99,22 @@ int main(){
     return 1;
   }
   while(true){
+    
 		pthread_mutex_lock(&mutex);
     AbstractProcess* p = queue->isEmpty()? NULL: queue->next();
     pthread_mutex_unlock(&mutex);
+
     int timeToExecute = config->timeToExecute;
     bool finished = false;
+    
     while(!finished && timeToExecute>0){
       show_interface(p, queue, memoryHandler);
       std::string line;
       getline(std::cin, line);
+      pthread_mutex_lock(&mutex);
       if (p!=NULL)
         finished = p->executeOneQuantum();
+      pthread_mutex_unlock(&mutex);
       timeToExecute--;
     }
     if(!finished && p!=NULL){

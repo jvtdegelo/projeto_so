@@ -6,17 +6,12 @@ CFLAGS = -Wall -Wextra -std=c++11
 
 RM = rm
 #-------------------------------------------------
-teste: teste.o
-	$(CC) -pthread teste.o -o teste
-
-teste.o: src/teste.cpp
-	$(CC) $(CFLAGS) -c src/teste.cpp
-
-terminal: terminal.o
-	$(CC) terminal.o -o terminal
 
 simulator: DispatcherConfiguration.o GetterPID.o MemoryHandler.o FIFOQueue.o  CreateProcess.o InstructionProcess.o KillProcess.o simulator.o  
 	$(CC) -pthread DispatcherConfiguration.o GetterPID.o MemoryHandler.o  FIFOQueue.o CreateProcess.o InstructionProcess.o KillProcess.o simulator.o -o simulator
+
+terminal: terminal.o
+	$(CC) terminal.o -o terminal
 
 terminal.o: src/terminal.cpp
 	$(CC) $(CFLAGS) -c src/terminal.cpp	
