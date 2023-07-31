@@ -1,5 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <iostream>
+#include <pthread.h>
+#include <chrono>
+#include <thread>
 #include <vector>
 #include <string>
 #include "process/AbstractProcess.h"
@@ -10,6 +15,44 @@
 #include "memory/MemoryHandler.h"
 #include "configuration/DispatcherConfiguration.h"
 
+DispatcherConfiguration* config;
+GetterPID* getterPID;
+MemoryHandler* memoryHandler;
+AbstractQueue* queue;
+pthread_mutex_t mutex;
+int lastCounter = 0;
+
+void* listener(void* arg) {
+  while (true) {
+    std::ifstream inputFile("./memory_map.txt"); 
+    if (inputFile.is_open()) {
+      std::string line;
+      std::getline(inputFile, line);
+      int newCounter = std::stoi(line);
+      if (newCounter!=lastCounter){
+        std::getline(inputFile, line);
+        char operation = line[0];
+        int parameter = std::stoi(line.substr(2, line.size()-1));
+        AbstractProcess* newProcess;
+        if (operation == 'C')
+          newProcess = new CreateProcess(getterPID->get(), parameter, memoryHandler, queue);
+        else if (operation == 'K')
+          newProcess = new KillProcess(getterPID->get(), parameter, memoryHandler, queue);
+        pthread_mutex_lock(&mutex);
+        queue->add(newProcess);
+        pthread_mutex_unlock(&mutex);    
+      }
+      inputFile.close();
+    } else {
+      std::cout << "Unable to open the communication file" << std::endl;
+    }
+        
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+
+  return nullptr;
+}
+
 std::string fill_end_line(std::string str, int maxSize){
   if(maxSize> str.size())
     str.insert(str.end(), maxSize-str.size(), ' ');
@@ -17,10 +60,14 @@ std::string fill_end_line(std::string str, int maxSize){
 }
 
 void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandler* memory){
-  std::vector<std::string> tcbProcess = process->getTCB();
-  std::vector<std::string> statusProcess = process->getStatus();
+  std::vector<std::string> emptyVector;
+  std::vector<std::string> tcbProcess = process == NULL? emptyVector: process->getTCB();
+  std::vector<std::string> statusProcess = process == NULL? emptyVector: process->getStatus();
   std::vector<std::string> showMemory = memory->show();
+  pthread_mutex_lock(&mutex);
   std::vector<std::string> showQueue = queue->show();
+  pthread_mutex_unlock(&mutex);    
+  
   std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
   std::cout<<"|         Status        ||      TCB      || Mapa de bits ||   Fila de Prontos   |"<<std::endl;
   std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
@@ -36,37 +83,43 @@ void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandle
 }
 
 int main(){
-  DispatcherConfiguration* config = new DispatcherConfiguration();
-  std::cout<<std::to_string(config->timeToExecute)<<std::endl;
-  GetterPID* getterPID = new GetterPID();
-  MemoryHandler* memoryHandler = new MemoryHandler();
-  AbstractQueue* queue = new FIFOQueue();
-  CreateProcess cp1(getterPID->get(), 11, memoryHandler, queue);
-  CreateProcess cp2(getterPID->get(), 11, memoryHandler, queue);
-  CreateProcess cp3(getterPID->get(), 11, memoryHandler, queue);
-  KillProcess kp1(getterPID->get(), 1, memoryHandler, queue);
-  queue->add(&cp1);
-  queue->add(&kp1);
-  queue->add(&cp2);
-  queue->add(&cp3);
-  while(!queue->isEmpty()){
-    AbstractProcess* p = queue->next();
+  pthread_t thread;
+	pthread_mutex_init(&mutex, NULL);
+
+  config = new DispatcherConfiguration();
+  getterPID = new GetterPID();
+  memoryHandler = new MemoryHandler();
+  queue = new FIFOQueue();
+  int thread_num = 1;
+  int result = pthread_create(&thread, nullptr, listener, nullptr);
+  if (result != 0) {
+    std::cout << "Error: Unable to create the new thread." << std::endl;
+    return 1;
+  }
+  while(true){
+		pthread_mutex_lock(&mutex);
+    AbstractProcess* p = queue->isEmpty()? NULL: queue->next();
+    pthread_mutex_unlock(&mutex);
     int timeToExecute = config->timeToExecute;
     bool finished = false;
     while(!finished && timeToExecute>0){
       show_interface(p, queue, memoryHandler);
       std::string line;
       getline(std::cin, line);
-      finished = p->executeOneQuantum();
+      if (p!=NULL)
+        finished = p->executeOneQuantum();
       timeToExecute--;
     }
-    if(!finished){
+    if(!finished && p!=NULL){
+      pthread_mutex_lock(&mutex);
       queue->add(p);
+      pthread_mutex_unlock(&mutex);
     }
-    else{
+    else if(p!=NULL){
       p->killProcess();
     }
   }
+  pthread_join(thread, nullptr);
   return 0;
 }
 

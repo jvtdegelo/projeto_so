@@ -9,6 +9,7 @@ DispatcherConfiguration::DispatcherConfiguration(){
   if (inputFile.is_open()) {
     std::string line;
     std::getline(inputFile, line);
+    inputFile.close();
     size_t spacePos = line.find(' ');
     if (spacePos == std::string::npos) {
       timeToExecute=1;
@@ -40,5 +41,7 @@ DispatcherConfiguration::DispatcherConfiguration(){
       return;
     }
     schedulingAlgorithm = charStr[0] == 'R'? 1: 0;
+  } else {
+    std::cout << "Unable to open the file." << std::endl;
   }
 }

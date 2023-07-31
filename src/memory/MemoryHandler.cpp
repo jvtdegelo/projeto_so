@@ -24,7 +24,7 @@ MemoryHandler::MemoryHandler(){
 
     inputFile.close();
   } else {
-    std::cout << "Unable to open the file." << std::endl;
+    std::cout << "Unable to open the memory file." << std::endl;
   }
 }
 
