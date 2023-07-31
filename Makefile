@@ -7,10 +7,10 @@ CFLAGS = -Wall -Wextra -std=c++11
 RM = rm
 #-------------------------------------------------
 
-simulator: GetterPID.o MemoryHandler.o FIFOQueue.o  CreateProcess.o InstructionProcess.o KillProcess.o simulator.o  
-	$(CC) GetterPID.o MemoryHandler.o  FIFOQueue.o CreateProcess.o InstructionProcess.o KillProcess.o simulator.o -o simulator
+simulator: DispatcherConfiguration.o GetterPID.o MemoryHandler.o FIFOQueue.o  CreateProcess.o InstructionProcess.o KillProcess.o simulator.o  
+	$(CC) DispatcherConfiguration.o GetterPID.o MemoryHandler.o  FIFOQueue.o CreateProcess.o InstructionProcess.o KillProcess.o simulator.o -o simulator
 
-simulator.o: src/utils/GetterPID.h src/simulator.cpp src/process/CreateProcess.h src/memory/MemoryHandler.h src/queue/AbstractQueue.h src/queue/FIFOQueue.h
+simulator.o: src/configuration/DispatcherConfiguration.h src/utils/GetterPID.h src/simulator.cpp src/process/CreateProcess.h src/memory/MemoryHandler.h src/queue/AbstractQueue.h src/queue/FIFOQueue.h
 	$(CC) $(CFLAGS) -c src/simulator.cpp
 
 MemoryHandler.o: src/memory/MemoryHandler.cpp src/memory/MemoryHandler.h 
@@ -30,6 +30,9 @@ KillProcess.o: src/process/KillProcess.cpp src/process/KillProcess.h src/process
 
 GetterPID.o: src/utils/GetterPID.cpp src/utils/GetterPID.h
 	$(CC) $(CFLAGS) -c src/utils/GetterPID.cpp
+
+DispatcherConfiguration.o: src/configuration/DispatcherConfiguration.cpp src/configuration/DispatcherConfiguration.h
+	$(CC) $(CFLAGS) -c src/configuration/DispatcherConfiguration.cpp
 
 clean: 
 	$(RM) *.o simulator

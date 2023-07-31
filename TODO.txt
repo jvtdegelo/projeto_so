@@ -1,4 +1,3 @@
-- Adicionar depois de quantos Quantum troca o processo
 - Adicionar segundo programa adicionando novos processos na fila
 - Adicionar implementacao Round-Robin
 - Adicionar geracao aleatoria de codigos para InstructionProcess

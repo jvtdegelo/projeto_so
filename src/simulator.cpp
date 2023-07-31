@@ -8,6 +8,7 @@
 #include "queue/AbstractQueue.h"
 #include "queue/FIFOQueue.h"
 #include "memory/MemoryHandler.h"
+#include "configuration/DispatcherConfiguration.h"
 
 std::string fill_end_line(std::string str, int maxSize){
   if(maxSize> str.size())
@@ -35,6 +36,8 @@ void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandle
 }
 
 int main(){
+  DispatcherConfiguration* config = new DispatcherConfiguration();
+  std::cout<<std::to_string(config->timeToExecute)<<std::endl;
   GetterPID* getterPID = new GetterPID();
   MemoryHandler* memoryHandler = new MemoryHandler();
   AbstractQueue* queue = new FIFOQueue();
@@ -48,10 +51,15 @@ int main(){
   queue->add(&cp3);
   while(!queue->isEmpty()){
     AbstractProcess* p = queue->next();
-    show_interface(p, queue, memoryHandler);
-    std::string line;
-    getline(std::cin, line);
-    bool finished = p->executeOneQuantum();
+    int timeToExecute = config->timeToExecute;
+    bool finished = false;
+    while(!finished && timeToExecute>0){
+      show_interface(p, queue, memoryHandler);
+      std::string line;
+      getline(std::cin, line);
+      finished = p->executeOneQuantum();
+      timeToExecute--;
+    }
     if(!finished){
       queue->add(p);
     }
