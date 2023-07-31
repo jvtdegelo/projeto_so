@@ -14,7 +14,9 @@ public:
   InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler* memoryHandler);
   int getPriority() override;
   int getPID() override;
-  std::vector< std::pair< std::string, std::string> > getTCB() override;
+  std::vector< std::string > getTCB() override;
+  std::vector< std::string > getStatus() override;
+  std::string getName() override;
   bool executeOneQuantum() override;
   void killProcess() override;
 

@@ -28,7 +28,7 @@ MemoryHandler::MemoryHandler(){
   }
 }
 
-int MemoryHandler::Allocate(int size, int pid){
+int MemoryHandler::allocate(int size, int pid){
   for (int i=0; i<MEMORY_SIZE-size+1; i++){
     bool hasSpace = true;
     for (int j=i; j<i+size; j++){
@@ -51,7 +51,7 @@ int MemoryHandler::Allocate(int size, int pid){
 
 }
 
-void MemoryHandler::Deallocate(int pid){
+void MemoryHandler::deallocate(int pid){
   if(pidmap.count(pid)){
     std::pair< int, int> pidpair = pidmap[pid];
     int position = pidpair.first;
@@ -64,3 +64,25 @@ void MemoryHandler::Deallocate(int pid){
   }
   return;
 }
+
+char bool2str(bool position){
+  return position? '1': '0';
+}
+
+std::vector< std::string> MemoryHandler::show(){
+  std::vector< std::string> lines;
+  for (int i=0; i<5; i++){
+    std::string line;
+    line+="  ";
+    line+=bool2str(bitmap[4*i]);
+    line+=" ";
+    line+=bool2str(bitmap[4*i+1]);
+    line+=" ";
+    line+=bool2str(bitmap[4*i+2]);
+    line+=" ";
+    line+=bool2str(bitmap[4*i+3]);
+    lines.push_back(line);
+  }
+  return lines;
+}
+

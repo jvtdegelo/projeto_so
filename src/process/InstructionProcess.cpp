@@ -16,16 +16,29 @@ int InstructionProcess::getPID() {
   return pid;
 }
 
-std::vector< std::pair< std::string, std::string> > InstructionProcess::getTCB() {
-  std::vector< std::pair < std::string, std::string> > tcb;
-  tcb.push_back(std::make_pair("PID", std::to_string(pid)));
-  tcb.push_back(std::make_pair("Priority", std::to_string(priority))); 
-  tcb.push_back(std::make_pair("Program Counter", std::to_string(programCounter)));
-  if(checkPastCodeContains("AX"));
-    tcb.push_back(std::make_pair("AX", "#VALOR"));
-  if(checkPastCodeContains("BX"));
-    tcb.push_back(std::make_pair("BX", "#VALOR"));
+std::vector<std::string > InstructionProcess::getTCB() {
+  std::vector<std::string > tcb;
+  tcb.push_back("PID: "+std::to_string(pid));
+  tcb.push_back("Priority: "+std::to_string(priority)); 
+  tcb.push_back("PC: "+ std::to_string(programCounter));
+  if(checkPastCodeContains("AX"))
+    tcb.push_back("AX: #VALOR");
+  if(checkPastCodeContains("BX"))
+    tcb.push_back("BX: #VALOR");
   return tcb;
+}
+
+std::vector< std::string > InstructionProcess::getStatus() {
+  std::vector< std::string > status;
+  for (int i=0; i< code.size(); i++){
+    std::string line = programCounter == i? code[i] + " <-": code[i];
+    status.push_back(line);
+  }
+  return status;
+}
+
+std::string InstructionProcess::getName() {
+  return "PID " + std::to_string(pid) + ": INSTRUCTIONS"; 
 }
 
 bool InstructionProcess::executeOneQuantum() {
@@ -37,7 +50,7 @@ bool InstructionProcess::executeOneQuantum() {
 }
   
 void InstructionProcess::killProcess() {
-  memoryHandler->Deallocate(pid);
+  memoryHandler->deallocate(pid);
   return;
 }
 

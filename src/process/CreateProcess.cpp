@@ -15,17 +15,27 @@ int CreateProcess::getPID() {
   return pid;
 }
 
-std::vector< std::pair< std::string, std::string> > CreateProcess::getTCB() {
-  std::vector< std::pair < std::string, std::string> > tcb;
-  tcb.push_back(std::make_pair("PID", std::to_string(pid)));
-  tcb.push_back(std::make_pair("Priority", std::to_string(priority))); 
+std::vector< std::string > CreateProcess::getTCB() {
+  std::vector< std::string > tcb;
+  tcb.push_back("PID: "+std::to_string(pid));
+  tcb.push_back("Priority: "+std::to_string(priority)); 
 
   return tcb;
 }
 
+std::vector< std::string > CreateProcess::getStatus() {
+  std::vector< std::string > status;
+  status.push_back("create "+ std::to_string(newProcessMemory));
+  return status;
+}
+
+std::string CreateProcess::getName() {
+  return "PID " + std::to_string(pid) + ": CREATE " + std::to_string(newProcessMemory); 
+}
+
 bool CreateProcess::executeOneQuantum() {
   int newPid = getterPID->get();
-  int memoryPosition = memoryHandler->Allocate(newProcessMemory, newPid);
+  int memoryPosition = memoryHandler->allocate(newProcessMemory, newPid);
   if (memoryPosition == -1){
     priority++;
     return false;

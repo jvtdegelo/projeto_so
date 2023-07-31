@@ -6,7 +6,8 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include<utility>
+#include <utility>
+#include <vector>
 
 #define MEMORY_SIZE 20
 
@@ -17,8 +18,9 @@ private:
 
 public:
   MemoryHandler();
-  int Allocate(int size, int pid);
-  void Deallocate(int pid);
+  int allocate(int size, int pid);
+  void deallocate(int pid);
+  std::vector< std::string> show();
 };
 
 #endif
