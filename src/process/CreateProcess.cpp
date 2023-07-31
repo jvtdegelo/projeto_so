@@ -3,7 +3,9 @@
 
 CreateProcess::CreateProcess(
   int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractQueue* processQueue): 
-  priority(1), pid(pid), newProcessMemory(newProcessMemory), memoryHandler(memoryHandler), processQueue(processQueue) {}
+  priority(1), pid(pid), newProcessMemory(newProcessMemory), memoryHandler(memoryHandler), processQueue(processQueue) {
+    getterPID = new GetterPID();
+  }
 
 int CreateProcess::getPriority() {
   return priority;
@@ -22,7 +24,7 @@ std::vector< std::pair< std::string, std::string> > CreateProcess::getTCB() {
 }
 
 bool CreateProcess::executeOneQuantum() {
-  int newPid = ++NEW_PROCESS_ID;
+  int newPid = getterPID->get();
   int memoryPosition = memoryHandler->Allocate(newProcessMemory, newPid);
   if (memoryPosition == -1){
     priority++;
@@ -36,5 +38,3 @@ bool CreateProcess::executeOneQuantum() {
 void CreateProcess::killProcess() {
   return;
 }
-
-int CreateProcess::NEW_PROCESS_ID = 0;

@@ -9,12 +9,13 @@
 #include "memory/MemoryHandler.h"
 
 int main(){
+  GetterPID* getterPID = new GetterPID();
   MemoryHandler* memoryHandler = new MemoryHandler();
   AbstractQueue* queue = new FIFOQueue();
-  CreateProcess cp1(11, 4, memoryHandler, queue);
-  CreateProcess cp2(12, 5, memoryHandler, queue);
-  CreateProcess cp3(13, 5, memoryHandler, queue);
-  KillProcess kp1(14, 12, memoryHandler, queue);
+  CreateProcess cp1(getterPID->get(), 4, memoryHandler, queue);
+  CreateProcess cp2(getterPID->get(), 5, memoryHandler, queue);
+  CreateProcess cp3(getterPID->get(), 5, memoryHandler, queue);
+  KillProcess kp1(getterPID->get(), 1, memoryHandler, queue);
   queue->add(&cp1);
   queue->add(&kp1);
   queue->add(&cp2);

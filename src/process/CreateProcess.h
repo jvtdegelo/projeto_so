@@ -7,6 +7,7 @@
 
 #include "../memory/MemoryHandler.h"
 #include "../queue/AbstractQueue.h"
+#include "../utils/GetterPID.h"
 #include "AbstractProcess.h"
 
 class CreateProcess: public AbstractProcess{
@@ -24,7 +25,7 @@ private:
   int newProcessMemory;
   MemoryHandler* memoryHandler;
   AbstractQueue* processQueue;
-  static int NEW_PROCESS_ID;
+  GetterPID* getterPID;
 };
 
 #endif
