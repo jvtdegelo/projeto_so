@@ -1,5 +1,4 @@
 - Adicionar primeira versao layout
-- Verificar o que fazer quando nao for possivel criar processo por falta de memoria
 - Adicionar segundo programa adicionando novos processos na fila
 - Adicionar implementacao Round-Robin
 - Adicionar geracao aleatoria de codigos para InstructionProcess
