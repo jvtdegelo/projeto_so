@@ -1,11 +1,9 @@
 #include "InstructionProcess.h"
+#include <random>
 
 InstructionProcess::InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler* memoryHandler):
   priority(2), pid(pid), memorySize(memorySize), memoryPosition(memoryPosition), memoryHandler(memoryHandler){ 
-  code.push_back("MOV AX, #0");
-  code.push_back("MOV BX, AX");
-  code.push_back("JMP #0");
-  code.push_back("HLT");
+  createRandomProcess();
 }
 
 int InstructionProcess::getPriority() {
@@ -62,4 +60,43 @@ bool InstructionProcess::checkPastCodeContains(std::string str){
     }
   }
   return false;
+}
+
+void InstructionProcess::createRandomProcess(){
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<int> dist(0, 4);
+  int num = dist(gen);
+  if(num == 0){
+    code.push_back("PUSH AX");
+    code.push_back("PUSH BX");
+    code.push_back("MOV AX, #0");
+    code.push_back("MOV BX, AX");
+    code.push_back("JMP #0");
+    code.push_back("HLT");
+  }
+  else if(num==1){
+    code.push_back("MOV AX, #0");
+    code.push_back("MOV BX, AX");
+    code.push_back("JMP #0");
+    code.push_back("HLT");
+  }
+
+  else if(num==2){
+    code.push_back("MOV AX, #0");
+    code.push_back("POP AX");
+    code.push_back("JMP #0");
+    code.push_back("HLT");
+  }
+  
+  else if(num==3){
+    code.push_back("HLT");
+  }
+
+  else{
+    code.push_back("MOV BX, #0");
+    code.push_back("JMP #0");
+    code.push_back("HLT");   
+  }
+
 }

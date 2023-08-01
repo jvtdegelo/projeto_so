@@ -29,6 +29,7 @@ private:
   MemoryHandler* memoryHandler; 
   std::vector< std::string > code;
   bool checkPastCodeContains(std::string str);
+  void createRandomProcess();
 };
 
 #endif
