@@ -41,12 +41,12 @@ std::string InstructionProcess::getName() {
   return "PID " + std::to_string(pid) + ": INSTRUCTIONS"; 
 }
 
-bool InstructionProcess::executeOneQuantum() {
+StatusExecution InstructionProcess::executeOneQuantum() {
   programCounter+=1;
   if(programCounter == code.size()){
-    return true;
+    return StatusExecution::Finished;
   }
-  return false;
+  return StatusExecution::Executing;
 }
   
 void InstructionProcess::killProcess() {

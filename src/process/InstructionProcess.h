@@ -17,7 +17,7 @@ public:
   std::vector< std::string > getTCB() override;
   std::vector< std::string > getStatus() override;
   std::string getName() override;
-  bool executeOneQuantum() override;
+  StatusExecution executeOneQuantum() override;
   void killProcess() override;
 
 private:

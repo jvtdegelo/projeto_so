@@ -1,3 +1,2 @@
-- Adicionar implementacao Round-Robin
 - Adicionar geracao aleatoria de codigos para InstructionProcess
 - Criar processo para compactacao da memoria e determinar quando ele deve ocorrer

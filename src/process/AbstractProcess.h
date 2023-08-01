@@ -4,6 +4,12 @@
 #include <vector>
 #include <string>
 
+enum StatusExecution{
+  Finished,
+  Executing,
+  Blocked
+};
+
 class AbstractProcess {
 public:
   virtual int getPriority()=0;
@@ -11,7 +17,7 @@ public:
   virtual std::vector< std::string > getTCB()=0;
   virtual std::vector< std::string > getStatus()=0;
   virtual std::string getName()=0;
-  virtual bool executeOneQuantum()=0;
+  virtual StatusExecution executeOneQuantum()=0;
   virtual void killProcess()=0;  
 };
 

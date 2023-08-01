@@ -2,8 +2,8 @@
 #include "InstructionProcess.h"
 
 CreateProcess::CreateProcess(
-  int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractQueue* processQueue): 
-  priority(1), pid(pid), newProcessMemory(newProcessMemory), memoryHandler(memoryHandler), processQueue(processQueue) {
+  int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher): 
+  priority(1), pid(pid), newProcessMemory(newProcessMemory), memoryHandler(memoryHandler), dispatcher(dispatcher) {
     getterPID = new GetterPID();
   }
 
@@ -33,16 +33,16 @@ std::string CreateProcess::getName() {
   return "PID " + std::to_string(pid) + ": CREATE " + std::to_string(newProcessMemory); 
 }
 
-bool CreateProcess::executeOneQuantum() {
+StatusExecution CreateProcess::executeOneQuantum() {
   int newPid = getterPID->get();
   int memoryPosition = memoryHandler->allocate(newProcessMemory, newPid);
   if (memoryPosition == -1){
     priority++;
-    return false;
+    return StatusExecution::Blocked;
   }
   AbstractProcess* p = new InstructionProcess(newPid, newProcessMemory, memoryPosition, memoryHandler);
-  processQueue->add(p);
-  return true;  
+  dispatcher->add(p);
+  return StatusExecution::Finished;  
 }
 
 void CreateProcess::killProcess() {

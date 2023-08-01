@@ -6,19 +6,19 @@
 #include <utility>
 
 #include "../memory/MemoryHandler.h"
-#include "../queue/AbstractQueue.h"
+#include "../dispatcher/AbstractDispatcher.h"
 #include "../utils/GetterPID.h"
 #include "AbstractProcess.h"
 
 class CreateProcess: public AbstractProcess{
 public:
-  CreateProcess(int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractQueue* processQueue);
+  CreateProcess(int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher);
   int getPriority() override;
   int getPID() override;
   std::vector< std::string > getTCB() override;
   std::vector< std::string > getStatus() override;
   std::string getName() override;
-  bool executeOneQuantum() override;
+  StatusExecution executeOneQuantum() override;
   void killProcess() override;
 
 private:
@@ -26,7 +26,7 @@ private:
   int pid;
   int newProcessMemory;
   MemoryHandler* memoryHandler;
-  AbstractQueue* processQueue;
+  AbstractDispatcher* dispatcher;
   GetterPID* getterPID;
 };
 

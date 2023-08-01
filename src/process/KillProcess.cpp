@@ -1,8 +1,8 @@
 #include "KillProcess.h"
 
 KillProcess::KillProcess(
-  int pid, int pidToKill, MemoryHandler* memoryHandler, AbstractQueue* processQueue):
-  priority(1), pid(pid), pidToKill(pidToKill), memoryHandler(memoryHandler), processQueue(processQueue) {}
+  int pid, int pidToKill, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher):
+  priority(1), pid(pid), pidToKill(pidToKill), memoryHandler(memoryHandler), dispatcher(dispatcher) {}
 
 int KillProcess::getPriority() {
   return priority;
@@ -30,11 +30,11 @@ std::string KillProcess::getName() {
   return "PID " + std::to_string(pid) + ": KILL " + std::to_string(pidToKill); 
 }
 
-bool KillProcess::executeOneQuantum() {
-  AbstractProcess* process = processQueue->remove(pidToKill);
+StatusExecution KillProcess::executeOneQuantum() {
+  AbstractProcess* process = dispatcher->remove(pidToKill);
   if(process!=NULL)
     process->killProcess();
-  return true;
+  return StatusExecution::Finished;
 }
 
 void KillProcess::killProcess() {
