@@ -3,24 +3,18 @@
 #include <fstream>
 #include <string>
 
-int counter = 0;
-
-void write_file(std::string str){
-  std::ofstream file("communication.txt");
+void write_end_file(std::string str){
+  std::ofstream file;
+  file.open("communication.txt", std::ios::app);
   if (!file) {
       std::cout << "Error: Could not open the file" << std::endl;
       return;
   }
-    file << counter << std::endl;
-    file << str << std::endl;
-    counter++;
-
-    file.close();
+  file << str << std::endl;
+  file.close();
 }
 
-
 int main(){
-  write_file("");
   while(true){
     std::string input;
     std::getline(std::cin, input);
@@ -31,14 +25,13 @@ int main(){
     iss >> command >> parameter;
 
     if (command == "create") {
-        write_file("c " + std::to_string(parameter));
+        write_end_file("c " + std::to_string(parameter));
     } else if (command == "kill") {
-        write_file("k " + std::to_string(parameter));
+        write_end_file("k " + std::to_string(parameter));
     } else {
         std::cout << "Invalid command! Please use 'create' or 'kill'." << std::endl;
     }
   }
   
-
   return 0;
 }

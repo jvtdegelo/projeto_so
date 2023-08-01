@@ -20,18 +20,14 @@ GetterPID* getterPID;
 MemoryHandler* memoryHandler;
 AbstractQueue* queue;
 pthread_mutex_t mutex;
-int lastCounter = 0;
 
 void* listener(void* arg) {
   while (true) {
-    std::ifstream inputFile("./communication.txt"); 
-    if (inputFile.is_open()) {
+    std::ifstream communicationFileRead("./communication.txt"); 
+    if (communicationFileRead.is_open()) {
       std::string line;
-      std::getline(inputFile, line);
-      int newCounter = std::stoi(line);
-      if (newCounter!=lastCounter){
-        lastCounter=newCounter;
-        std::getline(inputFile, line);
+      std::getline(communicationFileRead, line);
+      while(!communicationFileRead.eof()){
         char operation = line[0];
         int parameter = std::stoi(line.substr(2, line.size()-1));
         AbstractProcess* newProcess;
@@ -43,9 +39,17 @@ void* listener(void* arg) {
           newProcess = new KillProcess(getterPID->get(), parameter, memoryHandler, queue);
         }
         queue->add(newProcess);
-        pthread_mutex_unlock(&mutex);    
+        pthread_mutex_unlock(&mutex);
+        std::getline(communicationFileRead, line);
       }
-      inputFile.close();
+      communicationFileRead.close();
+
+      std::ofstream communicationFileWrite("./communication.txt");
+      if (!communicationFileWrite) {
+        std::cerr << "Error opening the communication file for writing." << std::endl;
+      }
+      communicationFileWrite.close();
+
     } else {
       std::cout << "Unable to open the communication file" << std::endl;
     }
@@ -60,6 +64,7 @@ std::string fill_end_line(std::string str, int maxSize){
   if(maxSize> str.size())
     str.insert(str.end(), maxSize-str.size(), ' ');
   return str;
+
 }
 
 void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandler* memory){
@@ -70,17 +75,17 @@ void show_interface(AbstractProcess* process, AbstractQueue* queue, MemoryHandle
   pthread_mutex_lock(&mutex);
   std::vector<std::string> showQueue = queue->show();
   pthread_mutex_unlock(&mutex);    
-  std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
-  std::cout<<"|         Status        ||      TCB      || Mapa de bits ||   Fila de Prontos   |"<<std::endl;
-  std::cout<<"+=======================++===============++==============++=====================+"<<std::endl;
+  std::cout<<"+=======================++===============++==============++=======================+"<<std::endl;
+  std::cout<<"|         Status        ||      TCB      || Mapa de bits ||    Fila de Prontos    |"<<std::endl;
+  std::cout<<"+=======================++===============++==============++=======================+"<<std::endl;
   for(int i=0; i<8; i++){
     std::string statusLine = i<statusProcess.size()? statusProcess[i]: "";
     std::string tcbLine = i<tcbProcess.size()? tcbProcess[i]: "";
     std::string memoryLine = i<showMemory.size()? showMemory[i]: "";
     std::string queueLine = i<showQueue.size()? showQueue[i]: "";
-    std::cout<<"| " << fill_end_line(statusLine, 21) << " || " << fill_end_line(tcbLine, 13) << " || " << fill_end_line(memoryLine, 12) << " || "<< fill_end_line(queueLine, 19)<< " |"<< std::endl;
+    std::cout<<"| " << fill_end_line(statusLine, 21) << " || " << fill_end_line(tcbLine, 13) << " || " << fill_end_line(memoryLine, 12) << " || "<< fill_end_line(queueLine, 21)<< " |"<< std::endl;
   }
-  std::cout<<"+-----------------------++---------------++--------------++---------------------+"<<std::endl;
+  std::cout<<"+-----------------------++---------------++--------------++-----------------------+"<<std::endl;
   std::cout<< std::endl;
 }
 
