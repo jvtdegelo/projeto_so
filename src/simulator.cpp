@@ -7,6 +7,7 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "process/AbstractProcess.h"
 #include "process/CreateProcess.h"
 #include "process/KillProcess.h"
@@ -76,17 +77,17 @@ void show_interface(AbstractProcess* process, AbstractDispatcher* dispatcher, Me
   pthread_mutex_lock(&mutex);
   std::vector<std::string> showQueue = dispatcher->showQueue();
   pthread_mutex_unlock(&mutex);
-  std::cout<<"+=======================++===============++==============++=======================+"<<std::endl;
-  std::cout<<"|         Status        ||      TCB      || Mapa de bits ||    Fila de Prontos    |"<<std::endl;
-  std::cout<<"+=======================++===============++==============++=======================+"<<std::endl;
-  for(int i=0; i<8; i++){
+  std::cout<<"+=======================++=====================++==============++=======================+"<<std::endl;
+  std::cout<<"|         Status        ||         TCB         || Mapa de bits ||    Fila de Prontos    |"<<std::endl;
+  std::cout<<"+=======================++=====================++==============++=======================+"<<std::endl;
+  for(int i=0; i<std::max(8,(int) showQueue.size()); i++){
     std::string statusLine = i<statusProcess.size()? statusProcess[i]: "";
     std::string tcbLine = i<tcbProcess.size()? tcbProcess[i]: "";
     std::string memoryLine = i<showMemory.size()? showMemory[i]: "";
     std::string queueLine = i<showQueue.size()? showQueue[i]: "";
-    std::cout<<"| " << fill_end_line(statusLine, 21) << " || " << fill_end_line(tcbLine, 13) << " || " << fill_end_line(memoryLine, 12) << " || "<< fill_end_line(queueLine, 21)<< " |"<< std::endl;
+    std::cout<<"| " << fill_end_line(statusLine, 21) << " || " << fill_end_line(tcbLine, 19) << " || " << fill_end_line(memoryLine, 12) << " || "<< fill_end_line(queueLine, 21)<< " |"<< std::endl;
   }
-  std::cout<<"+-----------------------++---------------++--------------++-----------------------+"<<std::endl;
+  std::cout<<"+-----------------------++---------------------++--------------++-----------------------+"<<std::endl;
   std::cout<< std::endl;
 }
 

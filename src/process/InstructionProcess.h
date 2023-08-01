@@ -11,8 +11,7 @@
 
 class InstructionProcess: public AbstractProcess{
 public:
-  InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler* memoryHandler);
-  int getPriority() override;
+  InstructionProcess(int pid, int memorySize, MemoryHandler* memoryHandler);
   int getPID() override;
   std::vector< std::string > getTCB() override;
   std::vector< std::string > getStatus() override;
@@ -22,9 +21,7 @@ public:
 
 private:
   int pid;
-  int priority;
   int memorySize;
-  int memoryPosition;
   int programCounter=0;
   MemoryHandler* memoryHandler; 
   std::vector< std::string > code;

@@ -13,7 +13,6 @@
 class KillProcess: public AbstractProcess{
 public:
   KillProcess(int pid, int pidToKill, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher);
-  int getPriority() override;
   int getPID() override;
   std::vector< std::string > getTCB() override;
   std::vector< std::string > getStatus() override;
@@ -22,7 +21,6 @@ public:
   void killProcess() override;
 
 private:
-  int priority;
   int pid;
   int pidToKill;
   MemoryHandler* memoryHandler;

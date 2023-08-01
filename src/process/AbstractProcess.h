@@ -12,7 +12,6 @@ enum StatusExecution{
 
 class AbstractProcess {
 public:
-  virtual int getPriority()=0;
   virtual int getPID()=0;
   virtual std::vector< std::string > getTCB()=0;
   virtual std::vector< std::string > getStatus()=0;

@@ -1,18 +1,15 @@
-#ifndef CREATEPROCESS_H
-#define CREATEPROCESS_H
+#ifndef MEMORYCOMPRESSIONPROCESS_H
+#define MEMORYCOMPRESSIONPROCESS_H
 
 #include <vector>
 #include <string>
-#include <utility>
 
 #include "../memory/MemoryHandler.h"
-#include "../dispatcher/AbstractDispatcher.h"
-#include "../utils/GetterPID.h"
 #include "AbstractProcess.h"
 
-class CreateProcess: public AbstractProcess{
+class MemoryCompressionProcess: public AbstractProcess{
 public:
-  CreateProcess(int pid, int newProcessMemory, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher);
+  MemoryCompressionProcess(int pid, MemoryHandler* memoryHandler);
   int getPID() override;
   std::vector< std::string > getTCB() override;
   std::vector< std::string > getStatus() override;
@@ -22,10 +19,7 @@ public:
 
 private:
   int pid;
-  int memorySize;
   MemoryHandler* memoryHandler;
-  AbstractDispatcher* dispatcher;
-  GetterPID* getterPID;
 };
 
 #endif

@@ -2,11 +2,7 @@
 
 KillProcess::KillProcess(
   int pid, int pidToKill, MemoryHandler* memoryHandler, AbstractDispatcher* dispatcher):
-  priority(1), pid(pid), pidToKill(pidToKill), memoryHandler(memoryHandler), dispatcher(dispatcher) {}
-
-int KillProcess::getPriority() {
-  return priority;
-}
+  pid(pid), pidToKill(pidToKill), memoryHandler(memoryHandler), dispatcher(dispatcher) {}
 
 int KillProcess::getPID() {
   return pid;
@@ -15,7 +11,7 @@ int KillProcess::getPID() {
 std::vector< std::string > KillProcess::getTCB() {
   std::vector< std::string > tcb;
   tcb.push_back("PID: "+ std::to_string(pid));
-  tcb.push_back("Priority: "+std::to_string(priority)); 
+  tcb.push_back("PID to kill: " + std::to_string(pidToKill));
 
   return tcb;
 }

@@ -1,1 +1,0 @@
-- Criar processo para compactacao da memoria e determinar quando ele deve ocorrer

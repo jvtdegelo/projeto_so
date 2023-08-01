@@ -28,7 +28,20 @@ MemoryHandler::MemoryHandler(){
   }
 }
 
-int MemoryHandler::allocate(int size, int pid){
+int MemoryHandler::freeSpace(){
+  int free;
+  for(int i=0; i<MEMORY_SIZE; i++){
+    if(!bitmap[i])
+      free++;
+  }
+
+  return free;
+}
+
+StatusMemory MemoryHandler::allocate(int size, int pid){
+  if(freeSpace()<size)
+    return StatusMemory::NoSpace;
+
   for (int i=0; i<MEMORY_SIZE-size+1; i++){
     bool hasSpace = true;
     for (int j=i; j<i+size; j++){
@@ -42,13 +55,11 @@ int MemoryHandler::allocate(int size, int pid){
         bitmap[j] = true;
       }
       pidmap[pid] = std::make_pair(i, size);
-      return i;
+      return StatusMemory::Allocated;
     }
   }
 
-  std::cout<< "Não há espaço disponível na memória" << std::endl;
-  return -1;
-
+  return StatusMemory::Fragmented;
 }
 
 void MemoryHandler::deallocate(int pid){
@@ -62,6 +73,24 @@ void MemoryHandler::deallocate(int pid){
     pidmap.erase(pid);
     return;
   }
+  return;
+}
+
+void MemoryHandler::compress(){
+  std::map< int, std::pair < int, int > > newmap;
+  int newPosition = 0;
+  for (const auto& pair : pidmap) {
+    const int& pid = pair.first;
+    int size = pidmap[pid].second;
+    newmap[pid] = std::make_pair(newPosition, size);
+    newPosition+=size;
+  }
+  for(int i=0; i<newPosition;i++)
+    bitmap[i] = true;
+  for(int i=newPosition; i<MEMORY_SIZE;i++)
+    bitmap[i] = false;
+  pidmap = newmap;
+
   return;
 }
 

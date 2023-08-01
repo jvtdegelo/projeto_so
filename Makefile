@@ -7,8 +7,8 @@ CFLAGS = -Wall -Wextra -std=c++11
 RM = rm
 #-------------------------------------------------
 
-simulator: DispatcherConfiguration.o GetterPID.o MemoryHandler.o FIFODispatcher.o RoundRobinDispatcher.o  CreateProcess.o InstructionProcess.o KillProcess.o simulator.o  
-	$(CC) -pthread DispatcherConfiguration.o GetterPID.o MemoryHandler.o  FIFODispatcher.o RoundRobinDispatcher.o CreateProcess.o InstructionProcess.o KillProcess.o simulator.o -o simulator
+simulator: MemoryCompressionProcess.o DispatcherConfiguration.o GetterPID.o MemoryHandler.o FIFODispatcher.o RoundRobinDispatcher.o  CreateProcess.o InstructionProcess.o KillProcess.o simulator.o  
+	$(CC) -pthread MemoryCompressionProcess.o DispatcherConfiguration.o GetterPID.o MemoryHandler.o  FIFODispatcher.o RoundRobinDispatcher.o CreateProcess.o InstructionProcess.o KillProcess.o simulator.o -o simulator
 
 terminal: terminal.o
 	$(CC) terminal.o -o terminal
@@ -28,11 +28,14 @@ FIFODispatcher.o: src/dispatcher/FIFODispatcher.cpp src/dispatcher/FIFODispatche
 RoundRobinDispatcher.o: src/dispatcher/RoundRobinDispatcher.cpp src/dispatcher/RoundRobinDispatcher.h src/dispatcher/AbstractDispatcher.h  src/process/AbstractProcess.h
 	$(CC) $(CFLAGS) -c src/dispatcher/RoundRobinDispatcher.cpp
 
-CreateProcess.o: src/utils/GetterPID.h src/process/CreateProcess.cpp src/process/CreateProcess.h src/process/InstructionProcess.h src/process/AbstractProcess.h  src/dispatcher/AbstractDispatcher.h src/memory/MemoryHandler.h
+CreateProcess.o: src/utils/GetterPID.h src/process/CreateProcess.cpp src/process/CreateProcess.h src/process/InstructionProcess.h  src/process/MemoryCompressionProcess.h src/process/AbstractProcess.h  src/dispatcher/AbstractDispatcher.h src/memory/MemoryHandler.h
 	$(CC) $(CFLAGS) -c src/process/CreateProcess.cpp
 
 InstructionProcess.o: src/process/InstructionProcess.cpp src/process/InstructionProcess.h src/process/AbstractProcess.h  src/memory/MemoryHandler.h
 	$(CC) $(CFLAGS) -c src/process/InstructionProcess.cpp
+
+MemoryCompressionProcess.o: src/process/MemoryCompressionProcess.cpp src/process/MemoryCompressionProcess.h src/process/AbstractProcess.h  src/memory/MemoryHandler.h
+	$(CC) $(CFLAGS) -c src/process/MemoryCompressionProcess.cpp
 
 KillProcess.o: src/process/KillProcess.cpp src/process/KillProcess.h src/process/AbstractProcess.h  src/memory/MemoryHandler.h src/dispatcher/AbstractDispatcher.h
 	$(CC) $(CFLAGS) -c src/process/KillProcess.cpp

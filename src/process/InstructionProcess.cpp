@@ -1,13 +1,9 @@
 #include "InstructionProcess.h"
 #include <random>
 
-InstructionProcess::InstructionProcess(int pid, int memorySize, int memoryPosition, MemoryHandler* memoryHandler):
-  priority(2), pid(pid), memorySize(memorySize), memoryPosition(memoryPosition), memoryHandler(memoryHandler){ 
+InstructionProcess::InstructionProcess(int pid, int memorySize, MemoryHandler* memoryHandler):
+  pid(pid), memorySize(memorySize), memoryHandler(memoryHandler){ 
   createRandomProcess();
-}
-
-int InstructionProcess::getPriority() {
-  return priority;
 }
 
 int InstructionProcess::getPID() {
@@ -16,9 +12,9 @@ int InstructionProcess::getPID() {
 
 std::vector<std::string > InstructionProcess::getTCB() {
   std::vector<std::string > tcb;
-  tcb.push_back("PID: "+std::to_string(pid));
-  tcb.push_back("Priority: "+std::to_string(priority)); 
+  tcb.push_back("PID: "+std::to_string(pid)); 
   tcb.push_back("PC: "+ std::to_string(programCounter));
+  tcb.push_back("Memory Size: " + std::to_string(memorySize));
   if(checkPastCodeContains("AX"))
     tcb.push_back("AX: #VALOR");
   if(checkPastCodeContains("BX"))
@@ -72,17 +68,19 @@ void InstructionProcess::createRandomProcess(){
     code.push_back("PUSH BX");
     code.push_back("MOV AX, #0");
     code.push_back("MOV BX, AX");
+    code.push_back("MOV AX, #1");
+    code.push_back("MOV AX, BX");
     code.push_back("JMP #0");
     code.push_back("HLT");
   }
   else if(num==1){
     code.push_back("MOV AX, #0");
-    code.push_back("MOV BX, AX");
     code.push_back("JMP #0");
     code.push_back("HLT");
   }
 
   else if(num==2){
+    code.push_back("MOV BX, #0");
     code.push_back("MOV AX, #0");
     code.push_back("POP AX");
     code.push_back("JMP #0");
@@ -98,5 +96,4 @@ void InstructionProcess::createRandomProcess(){
     code.push_back("JMP #0");
     code.push_back("HLT");   
   }
-
 }
