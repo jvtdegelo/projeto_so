@@ -29,7 +29,7 @@ MemoryHandler::MemoryHandler(){
 }
 
 int MemoryHandler::freeSpace(){
-  int free;
+  int free=0;
   for(int i=0; i<MEMORY_SIZE; i++){
     if(!bitmap[i])
       free++;
@@ -39,6 +39,7 @@ int MemoryHandler::freeSpace(){
 }
 
 StatusMemory MemoryHandler::allocate(int size, int pid){
+  std::cout<<std::to_string(freeSpace())<<std::endl;
   if(freeSpace()<size)
     return StatusMemory::NoSpace;
 
