@@ -1,0 +1,36 @@
+Gabriel Zambelli Scalabrini     11803715
+João Victor Texeira Degelo      11803479
+Johan Su Kwok                   10770176
+Pedro Henrique Martins de Santi 11803483
+
+O projeto de Sistemas Operacionais consiste em um simulador de sistema operacional, com processos sendo executados e escalonados. Esse projeto também conta com uma memória que é gerenciada através de um mapa de bits. Nas seções abaixo será detalhado todas as decisões de projeto e também a organização do código.  
+
+1. Processos
+  Para esse projeto, criou-se uma classe abstrata para representar uma visão geral de todos os processos (Abstract Process). Entre os métodos que todos os tipos devem implementar, os mais importantes são os métodos gráficos (que são mostrados na interface), o método que executa o processo durante um período de tempo fixo, e o método que é executado quando um processo termina (desalocação de memória). Os seguintes 4 tipos de processo implementam essa classe abstrata:
+
+  1.1. CreateProcess: Responsável pela criação de outros processos com uma quantidade fixa de memória. Geralmente cria um InstructionProcess, mas caso a memória esteja fragmentada, também pode criar um MemoryCompressionProcesss. Esse processo não aloca memória e é executado em um período de tempo. Durante a sua execução, caso a memória não consiga alocar a quantidade solicitada, esse processo retorna para a fila de execução.
+
+  1.2. KillProcess: Responsável pelo kill de um processo com o PID explícito na criação desse processo. Esse processo não aloca memória e é executado em um período de tempo.
+
+  1.3. InstructionProcess: Representa a execução de um código aleatório (existem 5 sequências de instruções possíveis). Possui memória alocada e executa uma instrução por período de tempo. Quando o processo termina ou é morto, o processo desaloca suas posições de memória.
+
+  1.4. MemoryCompressionProcesss: Processo responsável pela compactação da memória. É gerado quando a memória não consegue alocar posições, mesmo possuindo espaço (fragmentação externa). Esse processo não aloca memória e é executada em um período de tempo.
+
+
+
+2. Dispatcher
+
+
+
+
+3. Memória
+
+
+
+
+4. Comunicação entre terminal e simulador
+
+
+
+
+5. 
