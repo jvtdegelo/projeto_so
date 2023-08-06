@@ -3,34 +3,52 @@ João Victor Texeira Degelo      11803479
 Johan Su Kwok                   10770176
 Pedro Henrique Martins de Santi 11803483
 
-O projeto de Sistemas Operacionais consiste em um simulador de sistema operacional, com processos sendo executados e escalonados. Esse projeto também conta com uma memória que é gerenciada através de um mapa de bits. Nas seções abaixo será detalhado todas as decisões de projeto e também a organização do código.  
+  O projeto de Sistemas Operacionais consiste em um simulador de sistema operacional, com processos sendo executados e escalonados. Esse projeto também conta com uma memória que é gerenciada através de um mapa de bits. Nas seções abaixo será detalhado todas as decisões de projeto e também a organização do código.  
 
 1. Processos
   Para esse projeto, criou-se uma classe abstrata para representar uma visão geral de todos os processos (Abstract Process). Entre os métodos que todos os tipos devem implementar, os mais importantes são os métodos gráficos (que são mostrados na interface), o método que executa o processo durante um período de tempo fixo, e o método que é executado quando um processo termina (desalocação de memória). Os seguintes 4 tipos de processo implementam essa classe abstrata:
 
-  1.1. CreateProcess: Responsável pela criação de outros processos com uma quantidade fixa de memória. Geralmente cria um InstructionProcess, mas caso a memória esteja fragmentada, também pode criar um MemoryCompressionProcesss. Esse processo não aloca memória e é executado em um período de tempo. Durante a sua execução, caso a memória não consiga alocar a quantidade solicitada, esse processo retorna para a fila de execução.
+  1.1. CreateProcess: Responsável pela criação de outros processos com uma quantidade fixa de memória. Geralmente cria um InstructionProcess, mas caso a memória esteja fragmentada, também pode criar um MemoryCompressionProcesss. Esse processo não possui memória alocada e é executado em um período de tempo. Durante a sua execução, caso a memória não consiga alocar a quantidade solicitada, esse processo retorna para a fila de execução.
 
-  1.2. KillProcess: Responsável pelo kill de um processo com o PID explícito na criação desse processo. Esse processo não aloca memória e é executado em um período de tempo.
+  1.2. KillProcess: Responsável pelo kill de um processo com o PID explícito na criação desse processo. Esse processo não possui memória alocada e é executado em um período de tempo. Vale ressaltar que caso o PID que deseja-se matar não exista, o processo NÃO retorna à fila de execução.
 
-  1.3. InstructionProcess: Representa a execução de um código aleatório (existem 5 sequências de instruções possíveis). Possui memória alocada e executa uma instrução por período de tempo. Quando o processo termina ou é morto, o processo desaloca suas posições de memória.
+  1.3. InstructionProcess: Representa a execução de um código gerado aleatóriamente dentre 5 sequências de instruções possíveis. Possui uma quantidade fixa de memória alocada e executa uma instrução por período de tempo. Quando o processo termina ou é morto, o processo desaloca todas suas posições de memória.
 
-  1.4. MemoryCompressionProcesss: Processo responsável pela compactação da memória. É gerado quando a memória não consegue alocar posições, mesmo possuindo espaço (fragmentação externa). Esse processo não aloca memória e é executada em um período de tempo.
-
+  1.4. MemoryCompressionProcesss: Processo responsável pela compactação da memória. É gerado quando a memória não consegue alocar uma quantidade de posições, mesmo possuindo o espaço necessário (fragmentação externa). Esse processo não possui memória alocada e é executado em um período de tempo.
 
 
 2. Dispatcher
-
-
+  Para esse simulador, criou-se a classe abstrata AbstractDispatcher para a representação do dispatcher no código. Ela possui os métodos que qualquer dispatcher deve implementar: executeOneQuantum, getCurrentProcess, add, remove e showQueue. O primeiro método é responsável por atualizar o processo atual sendo executado e executar ele por um período de tempo. Já o segundo apenas retorna o processo atual que está sendo executado, enquanto que o terceiro e o quarto são responsáveis por adicionar e remover processos da fila de prontos. Por fim, o quinto e último método é utilizado para mostrar a fila de prontos na interface gráfica. Existem duas classes que implementam essa abstração: 
+  
+  2.1. FIFODispatcher: Implementa o dispatcher com o algoritmo FIFO, que é não-preemptivo e executa um processo até sua finalização;
+  
+  2.2. RoundRobinDispatcher: Implementa o dispatcher com o algoritmo Round-Robin, que é preemptivo e executa o processo atual por um determinado número de períodos de tempo e realiza o escalonamento ao final desse período. 
+  
+  O usuário pode definir o dispatcher que será utilizado durante a simulação alterando o arquivo config_dispatcher.txt. Esse arquivo é composto por um número separado por um caractere. O número corresponde ao quantum do algoritmo Round Robin (não apresenta nenhum impacto no FIFO). O caractere corresponde a qual algoritmo será utilizado (F para FIFO e R para Round Robin). Vale ressaltar que, caso um processo não consiga ser executado em dado momento (por exemplo um processo de create não consiga alocar o número de posições de memória necessárias para seu novo processo) ele retorna para a fila de prontos. 
 
 
 3. Memória
-
-
+  A memória foi implementada com um mapa de bits e suas posições são alocadadas de acordo com o algoritmo First-Fit. Para implementá-la foi utilizado um array com 20 posições e um dicionário que salva a posição de e o tamanho da memória de cada processo. Para inicializar a memória com algumas posições ocupadas, basta alterar o arquivo memory_map.txt. Cada número corresponde a uma posição de memória (0->livre e 1->ocupado). A classe que representa a memória é a MemoryHandler, que apresenta 4 métodos: 
+  - allocate: Responsável por alocar um número de posições da memória para o processo. Esse método pode ter 3 retornos: posições alocadas com sucesso, não foi possível alocar devido a memória insuficiente ou não foi possível alocar devido a fragmentação externa.
+  - deallocate: Responsável por desalocar a memória de um processo. Caso o processo não exista, o método não faz nada.
+  - compress: Realiza a compressão da memória quando foi detectado a fragmentação externa. Esse método atualiza tanto o array das posições da memória quanto o dicionário que armazena as informações de cada processo.
+  - show: Retorna as informações para que o conteúdo da memória seja exibida na interface do simulador.    
 
 
 4. Comunicação entre terminal e simulador
+  A comunicação entre o terminal e o simulador é realizada através de um arquivo intermediário entre os dois. O programa terminal é responsável por gerenciar sua a entrada e saída e escrever o novo processo no arquivo communication.txt quando o usuário escrever um comando válido (create ou kill). Este programa sempre adiciona nas últimas linhas do arquivo o novo processo que deve ser criado. 
+  
+  Já no lado do simulador, ele possui duas threads, uma que é responsável por simular o sistema operacional e outra que é responsável por escutar o conteúdo desse arquivo. A thread listener verifica o conteúdo do arquivo communication.txt a cada 100 milissegundos adicionando todos os novos processos que estão presentes nele à fila de prontos. Ao fim dessa inserção, todo o conteúdo do arquivo é apagado, de modo a evitar que o mesmo processo seja adicionado à fila infinitamente. No simulador também foi utilizado um mutex para coordenar a ação das duas threads, evitando que o dispatcher seja utilizado simultaneamente. 
 
 
+5. Interface 
+  A interface do programa foi organizada em uma tabela, onde cada coluna apresenta as informações que representam o estado do simulador. As colunas são:
+  - Status: Indica a etapa da execução do processo atual.
+  
+  - TCB: As informações que são salvas pelo dispatcher para escalonar o proceso atual.
 
+  - Mapa de bits: Demonstra como está a ocupação da memória.
 
-5. 
+  - Fila de prontos: Demonstra a ordem de todos os processos que serão executados.
+  
+  O controle de quantum foi implementado utilizando o getline(), ou seja, para realizar a passagem de UM período de tempo, é necessário apertar "enter" no terminal do simulador. A interface é atualizada no terminal no início da execução do simulador, no momento em que um novo processo é inserido na fila de prontos e após a execução de um período de tempo (após o usuário apertar "enter"). 

@@ -1,0 +1,1 @@
+- Corrigir compress quando memória é executada com algumas posições
