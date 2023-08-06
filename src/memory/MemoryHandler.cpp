@@ -19,6 +19,8 @@ MemoryHandler::MemoryHandler(){
       
       bool currentPositionOccupied = line[i] == '1';
       bitmap[memoryIndex] = currentPositionOccupied;
+      if(currentPositionOccupied)
+        pidmap[-memoryIndex] = std::make_pair(memoryIndex, 1);
       memoryIndex++;
     }
 
