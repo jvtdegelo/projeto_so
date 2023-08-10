@@ -26,6 +26,7 @@ Pedro Henrique Martins de Santi 11803483
   
   O usuário pode definir o dispatcher que será utilizado durante a simulação alterando o arquivo config_dispatcher.txt. Esse arquivo é composto por um número separado por um caractere. O número corresponde ao quantum do algoritmo Round Robin (não apresenta nenhum impacto no FIFO). O caractere corresponde a qual algoritmo será utilizado (F para FIFO e R para Round Robin). Vale ressaltar que, caso um processo não consiga ser executado em dado momento (por exemplo um processo de create não consiga alocar o número de posições de memória necessárias para seu novo processo) ele retorna para a fila de prontos. 
 
+  Caso o usuário queira iniciar o simulador com alguns processos já criados, basta inicializar o programa terminal antes e digitar os comandos. Depois disso, ele inicializa o simulador, que apresentará os processos criados anteriormente.  
 
 3. Memória
   A memória foi implementada com um mapa de bits e suas posições são alocadadas de acordo com o algoritmo First-Fit. Para implementá-la foi utilizado um array com 20 posições e um dicionário que salva a posição de e o tamanho da memória de cada processo. Para inicializar a memória com algumas posições ocupadas, basta alterar o arquivo memory_map.txt. Cada número corresponde a uma posição de memória (0->livre e 1->ocupado). A classe que representa a memória é a MemoryHandler, que apresenta 4 métodos: 
@@ -39,6 +40,10 @@ Pedro Henrique Martins de Santi 11803483
   A comunicação entre o terminal e o simulador é realizada através de um arquivo intermediário entre os dois. O programa terminal é responsável por gerenciar sua a entrada e saída e escrever o novo processo no arquivo communication.txt quando o usuário escrever um comando válido (create ou kill). Este programa sempre adiciona nas últimas linhas do arquivo o novo processo que deve ser criado. 
   
   Já no lado do simulador, ele possui duas threads, uma que é responsável por simular o sistema operacional e outra que é responsável por escutar o conteúdo desse arquivo. A thread listener verifica o conteúdo do arquivo communication.txt a cada 100 milissegundos adicionando todos os novos processos que estão presentes nele à fila de prontos. Ao fim dessa inserção, todo o conteúdo do arquivo é apagado, de modo a evitar que o mesmo processo seja adicionado à fila infinitamente. No simulador também foi utilizado um mutex para coordenar a ação das duas threads, evitando que o dispatcher seja utilizado simultaneamente. 
+
+  O terminal apresenta dois comandos: 
+    - "create n": onde n é um número inteiro que representa a quantidade de memória alocada para o novo programa.
+    - "kill n": onde n é o PID do programa a ser morto.
 
 
 5. Interface 
