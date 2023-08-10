@@ -41,7 +41,6 @@ int MemoryHandler::freeSpace(){
 }
 
 StatusMemory MemoryHandler::allocate(int size, int pid){
-  std::cout<<std::to_string(freeSpace())<<std::endl;
   if(freeSpace()<size)
     return StatusMemory::NoSpace;
 

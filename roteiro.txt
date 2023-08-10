@@ -1,0 +1,6 @@
+- Tudo dando certo 4 processos + 1 kill
+
+- falta memoria - tenta criar dois processos grandes
+
+- altera as posicoes iniciais da memoria e causa fragmentacao externa e mostra como é resolvido
+
